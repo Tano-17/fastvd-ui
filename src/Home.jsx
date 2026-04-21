@@ -44,7 +44,7 @@ function Home() {
     setResult(null)
 
     try {
-      const response = await fetch('/api/extract', {
+      const response = await fetch('https://fastvd-api.onrender.com/api/extract', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,7 +162,7 @@ function Home() {
                   </h3>
                   {result.formats.map((format) => (
                     <a 
-                      href={`/api/download?url=${encodeURIComponent(format.url)}&title=${encodeURIComponent(result.title)}`} 
+                      href={`https://fastvd-api.onrender.com/api/download?url=${encodeURIComponent(format.url)}&title=${encodeURIComponent(result.title)}`} 
                       className="btn-download" 
                       key={format.id} 
                     >
