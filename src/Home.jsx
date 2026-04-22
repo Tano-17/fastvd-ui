@@ -16,6 +16,7 @@ function Home() {
   const [activeTab, setActiveTab] = useState('youtube')
   const [url, setUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [loadingMsg, setLoadingMsg] = useState('Extracting...')
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
 
@@ -43,14 +44,22 @@ function Home() {
     setError('')
     setIsLoading(true)
     setResult(null)
+    setLoadingMsg('Extracting...')
+
+    // If the backend is asleep (cold start), it can take up to 60s to wake up
+    const warmupTimer = setTimeout(() => {
+      setLoadingMsg('Waking up server... (this takes ~30s on first use)')
+    }, 6000)
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 90000) // 90s timeout
 
     try {
       const response = await fetch('https://fastvd-api.onrender.com/api/extract', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+        signal: controller.signal
       });
       
       const data = await response.json();
@@ -61,9 +70,16 @@ function Home() {
       
       setResult(data);
     } catch (err) {
-      setError(err.message || 'An error occurred while fetching the video. Make sure the backend server is running.');
+      if (err.name === 'AbortError') {
+        setError('Request timed out. The server took too long to respond. Please try again.');
+      } else {
+        setError(err.message || 'An error occurred. Please try again.');
+      }
     } finally {
+      clearTimeout(warmupTimer)
+      clearTimeout(timeoutId)
       setIsLoading(false);
+      setLoadingMsg('Extracting...')
     }
   }
 
@@ -123,7 +139,7 @@ function Home() {
               {isLoading ? (
                 <>
                   <div className="spinner"></div>
-                  Extracting...
+                  {loadingMsg}
                 </>
               ) : (
                 <>
