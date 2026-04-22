@@ -1,24 +1,33 @@
 import { useEffect, useRef } from 'react';
 
 export default function NativeAd() {
-  const adRef = useRef(null);
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    // Only inject the script once
-    if (adRef.current && adRef.current.childNodes.length === 0) {
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.async = true;
-      script.dataset.cfasync = 'false';
-      script.src = 'https://pl29217413.profitablecpmratenetwork.com/7c/a9/ec/7ca9ec000f39f9344e5c836a664d147f.js';
-      
-      adRef.current.appendChild(script);
-    }
+    if (!containerRef.current || containerRef.current.childNodes.length > 0) return;
+
+    // Create the container div Adsterra needs
+    const adContainer = document.createElement('div');
+    adContainer.id = 'container-d26d546e46bdff771b057d6223339bd0';
+    containerRef.current.appendChild(adContainer);
+
+    // Inject the script that fills the container
+    const script = document.createElement('script');
+    script.async = true;
+    script.dataset.cfasync = 'false';
+    script.src = 'https://pl29217411.profitablecpmratenetwork.com/d26d546e46bdff771b057d6223339bd0/invoke.js';
+    containerRef.current.appendChild(script);
   }, []);
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '2rem 0' }}>
-      <div ref={adRef}></div>
-    </div>
+    <div 
+      ref={containerRef}
+      style={{ 
+        width: '100%', 
+        margin: '1.5rem auto',
+        maxWidth: '700px',
+        minHeight: '100px'
+      }}
+    />
   );
 }
