@@ -10,6 +10,7 @@ import {
   FiImage,
   FiMusic
 } from 'react-icons/fi'
+import NativeAd from './NativeAd'
 
 function Home() {
   const [activeTab, setActiveTab] = useState('youtube')
@@ -180,6 +181,7 @@ function Home() {
             </div>
           )}
         </form>
+        <NativeAd />
       </main>
 
       <section className="features">
